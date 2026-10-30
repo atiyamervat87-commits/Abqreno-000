@@ -1,11 +1,8 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Project, ScreenSpec, TestCase, ProjectFile } from '../types';
 import { processUserChatIdea, ChatTurn } from '../services/aiBrainService';
+import { AbqarinoCreationEngine } from '../services/creationEngine';
+import JSZip from 'jszip';
 import {
   Sparkles,
   Send,
@@ -23,7 +20,14 @@ import {
   ArrowRight,
   ShieldCheck,
   Eye,
-  PhoneCall
+  PhoneCall,
+  Upload,
+  FolderUp,
+  FileArchive,
+  Loader2,
+  AlertCircle,
+  FileCode,
+  Folder
 } from 'lucide-react';
 
 interface CreationStudioProps {
@@ -66,6 +70,191 @@ export const CreationStudio: React.FC<CreationStudioProps> = ({
       timestamp: 'الآن'
     }
   ]);
+
+  // Upload Project State (FileReader & Input Integration)
+  const [creationMode, setCreationMode] = useState<'scratch' | 'import'>('scratch');
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadStatusMessage, setUploadStatusMessage] = useState<string>('');
+  const [uploadError, setUploadError] = useState<string>('');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [importedFilesCount, setImportedFilesCount] = useState<number>(0);
+
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
+
+  // FileReader ZIP Handler
+  const handleZipFile = (file: File) => {
+    if (!file) return;
+    setIsUploading(true);
+    setUploadStatusMessage('جارٍ قراءة حزمة ZIP عبر FileReader...');
+    setUploadError('');
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        setUploadStatusMessage('جارٍ فك الضغط واستخراج ملفات المصدر البرمجية...');
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const zip = await JSZip.loadAsync(arrayBuffer);
+        const extracted: { path: string; content: string; size: number }[] = [];
+
+        for (const [relativePath, entry] of Object.entries(zip.files)) {
+          if (entry.dir) continue;
+          if (relativePath.includes('node_modules/') || relativePath.includes('.git/') || relativePath.includes('dist/')) continue;
+
+          try {
+            const content = await entry.async('string');
+            extracted.push({
+              path: relativePath,
+              content,
+              size: content.length
+            });
+          } catch {
+            // skip binary
+          }
+        }
+
+        if (extracted.length === 0) {
+          setUploadError('الملف المضغوط لا يحتوي على ملفات برمجية صالحة للقراءة.');
+          setIsUploading(false);
+          return;
+        }
+
+        setUploadStatusMessage(`تم استخراج ${extracted.length} ملفاً. جارٍ التحليل عبر دورة الـ 15 مرحلة...`);
+
+        const engine = new AbqarinoCreationEngine();
+        const { project, artifacts } = engine.ingestUploadedProject(
+          extracted,
+          file.name,
+          clientName,
+          clientPhone,
+          agreedPriceEGP
+        );
+
+        setProjectName(project.name);
+        setScreens(artifacts.screens);
+        setFiles(artifacts.files);
+        setTestCases(artifacts.testCases);
+        setCreatedProject(project);
+        setImportedFilesCount(extracted.length);
+        setIsUploading(false);
+        setUploadStatusMessage(`تم استيراد ${extracted.length} ملفاً بنجاح وتم توليد الشاشات والاختبارات.`);
+        setCurrentStage(8); // Move to Stage 8: Files and Architecture
+      } catch (err: any) {
+        setUploadError(`فشل استخراج ملف ZIP: ${err.message || 'الملف تالف'}`);
+        setIsUploading(false);
+      }
+    };
+
+    reader.onerror = () => {
+      setUploadError('فشل قارئ الملفات FileReader في معالجة الحزمة.');
+      setIsUploading(false);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  // FileReader Folder Handler
+  const handleFolderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    setIsUploading(true);
+    setUploadStatusMessage('جارٍ قراءة مجلد المشروع عبر FileReader...');
+    setUploadError('');
+
+    const filesArray = Array.from(fileList).filter((f) => {
+      const p = (f as any).webkitRelativePath || f.name;
+      return !p.includes('node_modules/') && !p.includes('.git/') && !p.includes('dist/');
+    });
+
+    if (filesArray.length === 0) {
+      setUploadError('المجلد المختار لا يحتوي على ملفات برمجية صالحة.');
+      setIsUploading(false);
+      return;
+    }
+
+    const extracted: { path: string; content: string; size: number }[] = [];
+    let processed = 0;
+
+    for (const file of filesArray) {
+      const relativePath = (file as any).webkitRelativePath || file.name;
+      try {
+        const content = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (event) => resolve((event.target?.result as string) || '');
+          reader.onerror = () => reject(new Error('خطأ في FileReader'));
+          reader.readAsText(file);
+        });
+
+        extracted.push({
+          path: relativePath,
+          content,
+          size: file.size
+        });
+      } catch {
+        // skip unreadable
+      }
+
+      processed++;
+      if (processed % 5 === 0 || processed === filesArray.length) {
+        setUploadStatusMessage(`تمت قراءة ${processed} من ${filesArray.length} ملفاً بواسطة FileReader...`);
+      }
+    }
+
+    if (extracted.length === 0) {
+      setUploadError('تعذر استخراج ملفات نصية صالحة من المجلد.');
+      setIsUploading(false);
+      return;
+    }
+
+    const folderName = filesArray[0] && (filesArray[0] as any).webkitRelativePath
+      ? (filesArray[0] as any).webkitRelativePath.split('/')[0]
+      : 'مجلد المشروع';
+
+    setUploadStatusMessage(`تمت قراءة ${extracted.length} ملفاً. جارٍ التحليل الهندسي والمطابقة...`);
+
+    const engine = new AbqarinoCreationEngine();
+    const { project, artifacts } = engine.ingestUploadedProject(
+      extracted,
+      folderName,
+      clientName,
+      clientPhone,
+      agreedPriceEGP
+    );
+
+    setProjectName(project.name);
+    setScreens(artifacts.screens);
+    setFiles(artifacts.files);
+    setTestCases(artifacts.testCases);
+    setCreatedProject(project);
+    setImportedFilesCount(extracted.length);
+    setIsUploading(false);
+    setUploadStatusMessage(`تم استيراد ${extracted.length} ملفاً بنجاح وتم توليد الشاشات والاختبارات.`);
+    setCurrentStage(8);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (!files || files.length === 0) return;
+
+    const first = files[0];
+    if (first.name.endsWith('.zip')) {
+      handleZipFile(first);
+    } else {
+      setUploadError('يرجى سحب ملف ZIP أو استخدام زر "رفع مجلد المشروع" من الأسفل.');
+    }
+  };
 
   // Project Specs (Dynamic & customizable by user)
   const [projectName, setProjectName] = useState<string>('منظومة عيادات الشفاء المتطورة');
@@ -248,49 +437,40 @@ export default function ClinicDashboard() {
     }, 450);
   };
 
+  // Proceed to code generation using real creation engine
+  const handleProceedToCodeGeneration = () => {
+    const engine = new AbqarinoCreationEngine();
+    const { project, artifacts } = engine.executeFullPipeline(
+      ideaPrompt || projectName,
+      projectName,
+      clientName,
+      clientPhone,
+      agreedPriceEGP
+    );
+    setScreens(artifacts.screens);
+    setFiles(artifacts.files);
+    setTestCases(artifacts.testCases);
+    setCreatedProject(project);
+    setCurrentStage(8);
+  };
+
   // Complete Creation Workflow (Move to stage 15 & Lock in Vault)
   const handleFinalizeProject = () => {
-    const newProject: Project = {
-      id: `proj-${Date.now()}`,
-      orderNumber: `ABQ-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: projectName,
-      description: 'مشروع مولّد بالكامل عبر استوديو إنشاء عبقرينو ومجتاز لكافة الاختبارات البرمجية والأمنية.',
-      clientName: clientName || 'عميل تجريبي',
-      clientPhone: clientPhone || '01000000000',
-      type: 'creation',
-      techStack: ['React 19', 'TypeScript', 'Node.js', 'Express', 'SQLite', 'Tailwind CSS'],
-      status: 'completed_pending_delivery_approval',
-      currentStageNumber: 15,
-      priceEGP: agreedPriceEGP,
-      paymentVerifiedByOwner: false,
-      paymentReferencePhone: '01153747612',
-      requirements: [
-        { id: 'r1', title: 'السجل الطبي وحفظ الملفات', description: 'تشفير السجلات وإدارة المرضى.', category: 'core', approved: true },
-        { id: 'r2', title: 'حجز المواعيد والروشتات', description: 'توليد وطباعة روشتة إلكترونية.', category: 'core', approved: true },
-        { id: 'r3', title: 'أمان البيانات وعزل الصلاحيات', description: 'صلاحيات متعددة المستويات وحماية JWT.', category: 'security', approved: true }
-      ],
-      screens: screens,
-      files: files,
-      testCases: testCases.map((t) => ({ ...t, status: 'passed' })),
-      auditLogs: [
-        {
-          id: `aud-${Date.now()}`,
-          action: 'اكتمال الإنشاء والتنفيذ البرمجي',
-          timestamp: new Date().toISOString().replace('T', ' ').slice(0, 16),
-          userOrAdmin: `محرك عبقرينو Creation Engine (العميل: ${clientName})`,
-          details: 'تم اجتياز كافة الاختبارات وحفظ النسخة في الخزينة بانتظار موافقة صاحب المنصة.'
-        }
-      ],
-      deliveryLogs: [],
-      secureStoragePath: `/secure/vault/production_builds/ABQ-${Date.now()}.zip`,
-      finalBundleSizeBytes: 12450800,
-      createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      completedAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
-    };
-
-    setCreatedProject(newProject);
+    if (createdProject) {
+      onProjectCreated(createdProject);
+    } else {
+      const engine = new AbqarinoCreationEngine();
+      const { project } = engine.executeFullPipeline(
+        ideaPrompt || projectName,
+        projectName,
+        clientName,
+        clientPhone,
+        agreedPriceEGP
+      );
+      onProjectCreated(project);
+      setCreatedProject(project);
+    }
     setCurrentStage(15);
-    onProjectCreated(newProject);
   };
 
   return (
@@ -352,8 +532,158 @@ export default function ClinicDashboard() {
         </div>
       </div>
 
-      {/* Main Creation Interactive Workspaces */}
+      {/* Mode Selector: New Idea vs Upload Project */}
       {currentStage <= 4 && (
+        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCreationMode('scratch')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                creationMode === 'scratch'
+                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-950/50'
+                  : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>بدء مشروع جديد من الفكرة (15 مرحلة)</span>
+            </button>
+            <button
+              onClick={() => setCreationMode('import')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                creationMode === 'import'
+                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-950/50'
+                  : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span>استيراد ملف ZIP أو مجلد مشروع (FileReader)</span>
+            </button>
+          </div>
+
+          <span className="text-[11px] text-slate-400">
+            {creationMode === 'scratch'
+              ? 'مناقشة واستنباط المتطلبات مع العقل الاصطناعي'
+              : 'معالجة وفك وقراءة الأكواد محلياً بالكامل'}
+          </span>
+        </div>
+      )}
+
+      {/* Hidden File Inputs */}
+      <input
+        type="file"
+        ref={zipInputRef}
+        accept=".zip"
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleZipFile(e.target.files[0]);
+          }
+        }}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={folderInputRef}
+        {...({ webkitdirectory: '', directory: '', multiple: true } as any)}
+        onChange={handleFolderUpload}
+        className="hidden"
+      />
+
+      {/* Upload & Import Project Panel */}
+      {currentStage <= 4 && creationMode === 'import' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400">
+                <FolderUp className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">استيراد مشروع برمجي عبر FileReader</h3>
+                <p className="text-xs text-slate-400">يدعم أرشيف ZIP ومجلدات المشاريع الحقيقية مع تحليل المعمارية والشاشات</p>
+              </div>
+            </div>
+            {importedFilesCount > 0 && (
+              <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-full font-mono">
+                تم استيراد {importedFilesCount} ملفاً
+              </span>
+            )}
+          </div>
+
+          {/* Loading State Overlay / Card */}
+          {isUploading ? (
+            <div className="p-10 rounded-2xl bg-cyan-950/30 border border-cyan-800/80 flex flex-col items-center justify-center text-center space-y-4 animate-pulse">
+              <div className="relative">
+                <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                <div className="absolute inset-0 blur-lg bg-cyan-500/20 rounded-full"></div>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-white mb-1">جارٍ استيراد وتحليل ملفات المشروع...</h4>
+                <p className="text-xs text-cyan-300 font-mono">{uploadStatusMessage}</p>
+              </div>
+              <div className="text-[11px] text-slate-400 max-w-md">
+                تتم القراءة محلياً في الذاكرة عبر متصفحك باستخدام كائن FileReader ومكتبة JSZip، دون إرسال ملفاتك لأي خادم خارجي.
+              </div>
+            </div>
+          ) : (
+            /* Dropzone & Selector */
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all ${
+                isDragging
+                  ? 'border-cyan-400 bg-cyan-950/40 scale-[1.01]'
+                  : 'border-slate-700 bg-slate-950/60 hover:border-slate-600'
+              }`}
+            >
+              <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-cyan-400 mb-4 shadow-inner">
+                <Upload className="w-7 h-7" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1">اسحب وأفلت حزمة ZIP هنا، أو اختر نوع الرفع:</h4>
+              <p className="text-xs text-slate-400 mb-6 max-w-lg">
+                يقرأ محرك عبقرينو ملفات TypeScript, React, Express, Python, SQL ومجلدات المشاريع بدقة متناهية.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => zipInputRef.current?.click()}
+                  className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-2 transition-all shadow-md shadow-cyan-950/40"
+                >
+                  <FileArchive className="w-4 h-4" />
+                  <span>رفع ملف ZIP للمشروع</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => folderInputRef.current?.click()}
+                  className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs flex items-center gap-2 transition-all border border-slate-700"
+                >
+                  <FolderUp className="w-4 h-4" />
+                  <span>رفع مجلد المشروع كاملاً</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Status / Error feedback */}
+          {uploadError && (
+            <div className="p-4 rounded-xl bg-rose-950/50 border border-rose-800 flex items-center gap-3 text-rose-300 text-xs">
+              <AlertCircle className="w-5 h-5 shrink-0 text-rose-400" />
+              <span>{uploadError}</span>
+            </div>
+          )}
+
+          {uploadStatusMessage && !isUploading && !uploadError && (
+            <div className="p-4 rounded-xl bg-emerald-950/50 border border-emerald-800 flex items-center gap-3 text-emerald-300 text-xs">
+              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+              <span>{uploadStatusMessage}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Creation Interactive Workspaces */}
+      {currentStage <= 4 && creationMode === 'scratch' && (
         /* STAGE 1 - 4: Conversational Brain & Requirements Analysis */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Chat with Autonomous Brain */}
@@ -513,7 +843,7 @@ export default function ClinicDashboard() {
               </div>
 
               <button
-                onClick={() => setCurrentStage(8)}
+                onClick={handleProceedToCodeGeneration}
                 className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-lg shadow-cyan-950/40"
               >
                 <span>اعتماد الشاشات وبدء التوليد البرمجي (المرحلة 8)</span>

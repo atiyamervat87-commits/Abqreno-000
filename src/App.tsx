@@ -11,6 +11,10 @@ import { HomeLauncher } from './components/HomeLauncher';
 import { CreationStudio } from './components/CreationStudio';
 import { RepairStudio } from './components/RepairStudio';
 import { NeuralBrainLab } from './components/NeuralBrainLab';
+import { AbqarinoChat } from './components/AbqarinoChat';
+import { AntigravityCommandCenter } from './components/AntigravityCommandCenter';
+import { ToolsManagement } from './components/ToolsManagement';
+import { ModelTrainingLabView } from './components/neural/ModelTrainingLabView';
 import { AdminDeliveryPortal } from './components/AdminDeliveryPortal';
 import { BackupCenter } from './components/BackupCenter';
 import { ThreeScene } from './components/ThreeScene';
@@ -131,6 +135,10 @@ export default function App() {
           />
         )}
 
+        {currentTab === 'abqarino_chat' && (
+          <AbqarinoChat onNavigateToTab={(tab) => setCurrentTab(tab as StudioTab)} />
+        )}
+
         {currentTab === 'creation' && (
           <CreationStudio
             onProjectCreated={handleProjectCreated}
@@ -146,6 +154,16 @@ export default function App() {
         )}
 
         {currentTab === 'neural_brain' && <NeuralBrainLab />}
+
+        {currentTab === 'model_training' && (
+          <div className="space-y-6">
+            <ModelTrainingLabView />
+          </div>
+        )}
+
+        {currentTab === 'antigravity' && <AntigravityCommandCenter />}
+
+        {currentTab === 'tools_management' && <ToolsManagement />}
 
         {currentTab === 'three_lab' && (
           <div className="space-y-6">

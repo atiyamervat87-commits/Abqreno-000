@@ -14,7 +14,9 @@ import {
   Layers,
   Box,
   Lock,
-  Unlock
+  Unlock,
+  Bot,
+  Terminal
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -72,6 +74,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
+              onClick={() => onSelectTab('abqarino_chat')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                currentTab === 'abqarino_chat'
+                  ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Bot className="w-3.5 h-3.5 text-cyan-300" />
+              <span>محادثة عبقرينو</span>
+            </button>
+
+            <button
               onClick={() => onSelectTab('creation')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 currentTab === 'creation'
@@ -104,7 +118,31 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Cpu className="w-3.5 h-3.5 text-indigo-300" />
-              <span>العقل المستقل</span>
+              <span>مركز تطوير العقل</span>
+            </button>
+
+            <button
+              onClick={() => onSelectTab('antigravity')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                currentTab === 'antigravity'
+                  ? 'bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 text-white shadow-md'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Terminal className="w-3.5 h-3.5 text-cyan-300" />
+              <span>Antigravity CLI</span>
+            </button>
+
+            <button
+              onClick={() => onSelectTab('tools_management')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                currentTab === 'tools_management'
+                  ? 'bg-amber-600 text-white shadow-md'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Wrench className="w-3.5 h-3.5 text-amber-300" />
+              <span>إدارة الأدوات</span>
             </button>
 
             <button
@@ -128,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Archive className="w-3.5 h-3.5 text-emerald-300" />
-              <span>النسخ الاحتياطية (ZIP)</span>
+              <span>النسخ والعمليات</span>
             </button>
           </nav>
 
@@ -170,6 +208,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             الرئيسية
           </button>
           <button
+            onClick={() => onSelectTab('abqarino_chat')}
+            className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'abqarino_chat' ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white font-bold' : 'text-slate-400'}`}
+          >
+            محادثة عبقرينو
+          </button>
+          <button
             onClick={() => onSelectTab('creation')}
             className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'creation' ? 'bg-cyan-600 text-white font-bold' : 'text-slate-400'}`}
           >
@@ -185,7 +229,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectTab('neural_brain')}
             className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'neural_brain' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400'}`}
           >
-            العقل المستقل
+            مركز تطوير العقل
+          </button>
+          <button
+            onClick={() => onSelectTab('antigravity')}
+            className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'antigravity' ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white font-bold' : 'text-slate-400'}`}
+          >
+            Antigravity CLI
+          </button>
+          <button
+            onClick={() => onSelectTab('tools_management')}
+            className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'tools_management' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400'}`}
+          >
+            إدارة الأدوات
           </button>
           <button
             onClick={() => onSelectTab('three_lab')}
@@ -197,7 +253,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onSelectTab('backup_center')}
             className={`px-2.5 py-1 rounded whitespace-nowrap ${currentTab === 'backup_center' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400'}`}
           >
-            النسخ الكاملة
+            النسخ والعمليات
           </button>
         </div>
       </div>

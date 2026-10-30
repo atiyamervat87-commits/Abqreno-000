@@ -1,0 +1,38 @@
+{
+  "model_name": "Abqarino-Neural-Core-v3",
+  "training_mode": "Pure-Python Causal Decoder SGD",
+  "epochs_completed": 3,
+  "total_steps": 36,
+  "initial_loss": 6.0019,
+  "final_loss": 5.1734,
+  "training_duration_seconds": 6.9,
+  "loss_history": [
+    {
+      "epoch": 1,
+      "global_step": 12,
+      "loss": 6.0019,
+      "learning_rate": 0.01875,
+      "checkpoint_path": "neural_brain/checkpoints/checkpoint_epoch_1.json",
+      "timestamp": "2026-10-21 18:55:41"
+    },
+    {
+      "epoch": 2,
+      "global_step": 24,
+      "loss": 5.2678,
+      "learning_rate": 0.013636,
+      "checkpoint_path": "neural_brain/checkpoints/checkpoint_epoch_2.json",
+      "timestamp": "2026-10-21 18:55:43"
+    },
+    {
+      "epoch": 3,
+      "global_step": 36,
+      "loss": 5.1734,
+      "learning_rate": 0.010714,
+      "checkpoint_path": "neural_brain/checkpoints/checkpoint_epoch_3.json",
+      "timestamp": "2026-10-21 18:55:45"
+    }
+  ],
+  "latest_checkpoint": "neural_brain/checkpoints/checkpoint_latest.json",
+  "parameters_count": 49152,
+  "hardware_transparency_note": "تم تنفيذ دورة التدريب الحقيقية وتحديث الأوزان فعلياً داخل بيئة بايثون القياسية. لتدريب نموذج كامل بـ 125M أو 1B معامل على مليارات الرموز اللغوية، يلزم عنقود معالجة رسومية خارجي (Multi-GPU A100/H100) باستخدام PyTorch Distributed (DDP/FSDP)."
+}

@@ -18,7 +18,8 @@ import {
   Layers,
   Terminal,
   FileCode2,
-  PhoneCall
+  PhoneCall,
+  Bot
 } from 'lucide-react';
 
 interface HomeLauncherProps {
@@ -76,6 +77,18 @@ export const HomeLauncher: React.FC<HomeLauncherProps> = ({
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               <span>نسخة ZIP كاملة جاهزة للحفظ على الهاتف</span>
             </span>
+          </div>
+
+          {/* Direct Abqarino Chat Launcher Button */}
+          <div className="pt-2 flex justify-center">
+            <button
+              onClick={() => onSelectTab('abqarino_chat')}
+              className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 via-sky-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-cyan-950/50 hover:scale-105 transition-all"
+            >
+              <Bot className="w-5 h-5 text-cyan-200" />
+              <span>دخول محادثة عبقرينو سوبر المباشرة (AbqarinoChat)</span>
+              <ArrowLeft className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>
@@ -263,12 +276,14 @@ export const HomeLauncher: React.FC<HomeLauncherProps> = ({
           <div className="w-12 h-12 rounded-xl bg-indigo-950/80 border border-indigo-700 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-105 transition-transform">
             <Cpu className="w-6 h-6" />
           </div>
-          <h4 className="text-lg font-bold text-white mb-2">العقل الاصطناعي المستقل</h4>
+          <div className="flex items-center gap-1.5 mb-2">
+            <h4 className="text-lg font-bold text-white">مركز تطوير العقل وتدريب النموذج</h4>
+          </div>
           <p className="text-xs text-slate-300 leading-relaxed mb-4">
-            معمارية Transformer مستقلة تدعم مفردات عربية وأوزان تدريب حقيقية، مع مقاييس تقييم مقاومة الهلوسة وفهم التعليمات.
+            المركز الإداري لمالك: قيادة 12 وحدة عقلية، محادثة مباشرة، تدريب النموذج اللغوي محلياً عبر AdamW، وبنك تقييم ثابت وحزمة الاختبارات الـ 16.
           </p>
           <div className="flex items-center gap-1.5 text-xs text-indigo-400 font-semibold">
-            <span>فتح معمل التدريب والتقييم</span>
+            <span>دخول مركز التحكم العصبي (Neural Center)</span>
             <ArrowLeft className="w-3.5 h-3.5" />
           </div>
         </div>
@@ -305,6 +320,42 @@ export const HomeLauncher: React.FC<HomeLauncherProps> = ({
           </p>
           <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
             <span>تنزيل وفحص الأرشيف</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Card 4: Antigravity Command Center */}
+        <div
+          onClick={() => onSelectTab('antigravity')}
+          className="group cursor-pointer rounded-2xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 p-6 transition-all hover:bg-slate-900/80 shadow-lg"
+        >
+          <div className="w-12 h-12 rounded-xl bg-cyan-950/80 border border-cyan-700 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-105 transition-transform">
+            <Terminal className="w-6 h-6" />
+          </div>
+          <h4 className="text-lg font-bold text-white mb-2">Antigravity Command Center</h4>
+          <p className="text-xs text-slate-300 leading-relaxed mb-4">
+            مركز تشغيل وإدارة Antigravity CLI كمساعد تطوير خارجي لفحص الأكواد ومراجعة الأمان مع جسر الهاتف Termux.
+          </p>
+          <div className="flex items-center gap-1.5 text-xs text-cyan-400 font-semibold">
+            <span>فتح مركز قيادة Antigravity</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Card 5: Tools Management */}
+        <div
+          onClick={() => onSelectTab('tools_management')}
+          className="group cursor-pointer rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/60 p-6 transition-all hover:bg-slate-900/80 shadow-lg"
+        >
+          <div className="w-12 h-12 rounded-xl bg-amber-950/80 border border-amber-700 flex items-center justify-center text-amber-400 mb-4 group-hover:scale-105 transition-transform">
+            <Wrench className="w-6 h-6" />
+          </div>
+          <h4 className="text-lg font-bold text-white mb-2">إدارة الأدوات والوظائف الرسمية</h4>
+          <p className="text-xs text-slate-300 leading-relaxed mb-4">
+            حصر واختبار الأدوات المصرح بها لوحدات عقل عبقرينو (الحاسبة، فاحص الصياغة، حارس Zip Slip، ومرصاد ميثاق الوليد).
+          </p>
+          <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold">
+            <span>استعراض واختبار الأدوات</span>
             <ArrowLeft className="w-3.5 h-3.5" />
           </div>
         </div>

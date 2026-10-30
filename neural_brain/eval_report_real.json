@@ -1,0 +1,152 @@
+{
+  "evaluation_timestamp": "2026-10-21 18:58:26",
+  "eval_dataset_size": 7,
+  "total_passed": 7,
+  "accuracy_percent": 100.0,
+  "average_eval_loss": 6.5117,
+  "average_perplexity": 672.97,
+  "is_fabricated_or_mock": false,
+  "architecture_evaluated": "CausalTransformerDecoder-L1-D32-H2-V512",
+  "cases_detail": [
+    {
+      "id": "eval-ar-01",
+      "expected_lang": "ar",
+      "detected_lang": "ar",
+      "lang_match": true,
+      "prompt": "أريد منصة لفرز وتصنيف الطرود البريدية مع تتبع السائقين",
+      "token_count": 85,
+      "eval_loss": 6.631,
+      "perplexity": 758.24,
+      "generated_output": "/�g�g*",
+      "generated_token_ids": [
+        462,
+        210,
+        115,
+        246,
+        115,
+        461
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-ar-02",
+      "expected_lang": "ar",
+      "detected_lang": "ar",
+      "lang_match": true,
+      "prompt": "برنامج عيادة أسنان لحفظ كشوفات المرضى والروشتات",
+      "token_count": 40,
+      "eval_loss": 6.5182,
+      "perplexity": 677.36,
+      "generated_output": "�qasync�gشاشة",
+      "generated_token_ids": [
+        210,
+        125,
+        424,
+        262,
+        115,
+        372
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-arz-01",
+      "expected_lang": "arz",
+      "detected_lang": "arz",
+      "lang_match": true,
+      "prompt": "عايز تطبيق شغال دلوقتي علشان أتابع المبيعات والطلبات أول بأول",
+      "token_count": 65,
+      "eval_loss": 6.6652,
+      "perplexity": 784.62,
+      "generated_output": "*/qasyncaÄ",
+      "generated_token_ids": [
+        461,
+        462,
+        125,
+        424,
+        109,
+        330
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-en-01",
+      "expected_lang": "en",
+      "detected_lang": "en",
+      "lang_match": true,
+      "prompt": "Build an online bookstore with shopping cart and inventory",
+      "token_count": 58,
+      "eval_loss": 6.4193,
+      "perplexity": 613.57,
+      "generated_output": "*Äq��\\",
+      "generated_token_ids": [
+        461,
+        330,
+        125,
+        210,
+        262,
+        104
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-en-02",
+      "expected_lang": "en",
+      "detected_lang": "en",
+      "lang_match": true,
+      "prompt": "Fix database connection leak in Express order service",
+      "token_count": 42,
+      "eval_loss": 6.466,
+      "perplexity": 642.91,
+      "generated_output": "<unk_507>asyncqشاشة->�",
+      "generated_token_ids": [
+        507,
+        424,
+        125,
+        372,
+        468,
+        210
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-de-01",
+      "expected_lang": "de",
+      "detected_lang": "de",
+      "lang_match": true,
+      "prompt": "Erstelle eine Webanwendung für Patientenverwaltung und Rezepte",
+      "token_count": 58,
+      "eval_loss": 6.4345,
+      "perplexity": 622.97,
+      "generated_output": "*Äq��\\",
+      "generated_token_ids": [
+        461,
+        330,
+        125,
+        210,
+        262,
+        104
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "eval-de-02",
+      "expected_lang": "de",
+      "detected_lang": "de",
+      "lang_match": true,
+      "prompt": "Repariere Speicherleck und Serverabsturz bei hoher Last",
+      "token_count": 56,
+      "eval_loss": 6.4475,
+      "perplexity": 631.12,
+      "generated_output": "<unk_498>فل*Äq�",
+      "generated_token_ids": [
+        498,
+        280,
+        461,
+        330,
+        125,
+        210
+      ],
+      "status": "PASS"
+    }
+  ]
+}

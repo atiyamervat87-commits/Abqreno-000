@@ -5,11 +5,15 @@
 
 export type StudioTab = 
   | 'launcher' 
+  | 'abqarino_chat'
   | 'creation' 
   | 'repair' 
-  | 'neural_brain' 
-  | 'admin_delivery' 
+  | 'neural_brain'
+  | 'model_training'
+  | 'antigravity'
+  | 'tools_management'
   | 'backup_center'
+  | 'admin_delivery' 
   | 'three_lab';
 
 export type ProjectStatus =

@@ -42,26 +42,13 @@ export const INITIAL_MODEL_CONFIG: NeuralModelConfig = {
   }
 };
 
+import { defaultTokenizer } from './neural/tokenizer';
+
 /**
- * Procedural Tokenizer for Arabic & English
+ * Procedural Tokenizer for Arabic & English backed by Abqarino Tokenizer
  */
 export function simulateTokenize(text: string): { tokens: string[]; tokenIds: number[] } {
-  // Split on arabic words, latin words, punctuation, whitespace
-  const rawParts = text.match(/[\u0600-\u06FF]+|[a-zA-Z0-9]+|[^\s\w]/g) || [];
-  const tokens: string[] = [];
-  const tokenIds: number[] = [];
-
-  rawParts.forEach((part, index) => {
-    // Generate deterministic hash ID in vocab range [0, 31999]
-    let hash = 0;
-    for (let i = 0; i < part.length; i++) {
-      hash = (hash * 31 + part.charCodeAt(i)) % 32000;
-    }
-    tokens.push(part);
-    tokenIds.push(Math.abs(hash));
-  });
-
-  return { tokens, tokenIds };
+  return defaultTokenizer.tokenize(text);
 }
 
 /**

@@ -1,0 +1,7 @@
+{"id": "eval-ar-01", "lang": "ar", "prompt": "أريد منصة لفرز وتصنيف الطرود البريدية مع تتبع السائقين", "target_keywords": ["تطبيق", "نظام", "بيانات", "خادم"]}
+{"id": "eval-ar-02", "lang": "ar", "prompt": "برنامج عيادة أسنان لحفظ كشوفات المرضى والروشتات", "target_keywords": ["المرضى", "روشتات", "قاعدة", "بيانات"]}
+{"id": "eval-arz-01", "lang": "arz", "prompt": "عايز تطبيق شغال دلوقتي علشان أتابع المبيعات والطلبات أول بأول", "target_keywords": ["المتجر", "المنتجات", "سلة", "نظام"]}
+{"id": "eval-en-01", "lang": "en", "prompt": "Build an online bookstore with shopping cart and inventory", "target_keywords": ["platform", "inventory", "cart", "product"]}
+{"id": "eval-en-02", "lang": "en", "prompt": "Fix database connection leak in Express order service", "target_keywords": ["leak", "patched", "server", "identified"]}
+{"id": "eval-de-01", "lang": "de", "prompt": "Erstelle eine Webanwendung für Patientenverwaltung und Rezepte", "target_keywords": ["Praxis", "Patienten", "System", "Datenbank"]}
+{"id": "eval-de-02", "lang": "de", "prompt": "Repariere Speicherleck und Serverabsturz bei hoher Last", "target_keywords": ["Speicherleck", "behoben", "Server", "diagnostiziert"]}

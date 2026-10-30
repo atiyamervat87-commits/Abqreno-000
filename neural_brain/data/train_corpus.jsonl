@@ -1,0 +1,12 @@
+{"instruction": "أنشئ تطبيق عيادة طبية مع قاعدة بيانات", "response": "تم تحليل منظومة العيادات وتجهيز جداول المرضى والكشوفات والروشتات بقاعدة بيانات SQLite مشفرة."}
+{"instruction": "عايز أعمل متجر إلكتروني علشان أبيع المنتجات", "response": "تم تجهيز معمارية المتجر وسلة المشتريات وإدارة المخزون ونظام الطلبات وحساب الفاتورة."}
+{"instruction": "أصلح عطل تسريب الذاكرة في خادم الطلبات", "response": "تم فحص الكود وتشخيص سبب التسريب وتطبيق رقعة الإصلاح البرمجية مع اختبارات التحقق."}
+{"instruction": "Create a secure clinic management web app with SQLite", "response": "Clinic management architecture established with patients, appointments, and prescriptions database tables."}
+{"instruction": "Build an e-commerce shopping platform with cart", "response": "E-commerce platform initialized with product inventory, shopping cart, and transaction ledger."}
+{"instruction": "Fix database connection pool leak in Express server", "response": "Root cause of unclosed connection pool identified and patched with proper release handlers."}
+{"instruction": "Erstelle eine Webanwendung für Arztpraxen mit SQLite Datenbank", "response": "Praxisverwaltungssystem eingerichtet mit Patientenakten, Terminbuchung und digitalem Rezeptmodul."}
+{"instruction": "Repariere das Speicherleck im Node.js Server", "response": "Speicherleck diagnostiziert und durch saubere Bereinigung der Event-Listener vollständig behoben."}
+{"instruction": "أنشئ نظام مدرسي لتسجيل الطلاب والدرجات", "response": "تم إنشاء معمارية النظام المدرسي مع جداول الطلاب والمعلمين والمقررات ودرجات الامتحانات."}
+{"instruction": "عايز سيستم لحساب مرتبات الموظفين والحضور", "response": "تم بناء نظام المرتبات وحساب ساعات الحضور والخصومات والبدلات وتقارير الرواتب الشهرية."}
+{"instruction": "Generate TypeScript REST API endpoints for customer profiles", "response": "Created Express TypeScript routes with input validation, error handling, and database integration."}
+{"instruction": "Erstelle eine Lagerverwaltung für den Online-Shop", "response": "Lagerverwaltungssystem mit Bestandsverfolgung und automatischer Nachbestellung erfolgreich entworfen."}
