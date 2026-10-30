@@ -1,0 +1,6 @@
+{
+  "name": "عبقرينو Studio Ultimate",
+  "description": "منصة عبقرينو Studio Ultimate لإنشاء وإصلاح البرامج، مع عقل اصطناعي مستقل، ونظام تحكم حصري في التسليم والمحفظة 01153747612.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
